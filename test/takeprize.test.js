@@ -1,4 +1,20 @@
 const Piyango = artifacts.require("Piyango")
+var expectThrow =  async (promise, message) => {
+    try {
+        await promise;
+    } catch (err) {
+        return;
+    }
+    assert(false, message);
+}
+
+var expectSuccess =  async (promise, message) => {
+    try {
+        await promise;
+    } catch (err) {
+        assert(false, message);
+    }
+}
 
 contract("Piyango", (accounts) => {
 
@@ -26,14 +42,25 @@ contract("Piyango", (accounts) => {
             const val = await piyango.isGameAvailable();
             assert.equal(val, false, "Account is available before openRegisters call.")
         });
-
-/*it('Account should be ready', async () => {
+    });
+    describe('Opennig the game', async () => {
+        let initial_balance;
+        before(async () => {
+            initial_balance  = await web3.eth.getBalance(accounts[1])
+        });
+        it('User can\'t open the game if it is not the owner.', async () => {
+            await expectThrow(piyango.openRegisters.call({from: accounts[1]}), "Should throw error.");
+        });
+        it('Owner can open the game.', async () => {
+            await expectSuccess(piyango.openRegisters.call({from: accounts[0]}), "Shouldn't throw error.");
+        });
+        /*it('Can be registered', async () => {
+            await piyango.register({from: accounts[1], value:web3.utils.toWei(web3.utils.toBN("10"), "ether")})
+        });*/
+        /*it('Account should be ready', async () => {
             const balance = await web3.eth.getBalance(accounts[1])
             console.log("Balance", balance)
             assert.notEqual(balance, 0, "It shouldn't be 0");
-        });
-        it('Can be registered', async () => {
-            await piyango.register({from: accounts[1], value:web3.utils.toWei(web3.utils.toBN("10"), "ether")})
         });
 
         it("should be 10", async () => {
@@ -51,8 +78,8 @@ contract("Piyango", (accounts) => {
         // })
     });
 
-
 });
+
 
 
 // function takePrize() public payable {
