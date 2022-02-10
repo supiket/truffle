@@ -30,7 +30,7 @@ contract("Piyango", (accounts) => {
             await piyango.send(web3.utils.toWei(web3.utils.toBN("50"), "ether")).then(function(result) {});
 
             const balance = await piyango.getBalanceOfContract()
-            assert.equal(balance, BigInt(50e18), "The contract balance is 50.")
+            assert.equal(balance, 50e18, "The contract balance is 50.")
         })
 
 
