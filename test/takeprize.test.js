@@ -43,20 +43,31 @@ contract("Piyango", (accounts) => {
             assert.equal(val, false, "Account is available before openRegisters call.")
         });
     });
-    describe('Opennig the game', async () => {
+    describe('Openning the game', async () => {
         let initial_balance;
         before(async () => {
             initial_balance  = await web3.eth.getBalance(accounts[1])
         });
         it('User can\'t open the game if it is not the owner.', async () => {
             await expectThrow(piyango.openRegisters.call({from: accounts[1]}), "Should throw error.");
+            const val = await piyango.isGameAvailable();
+            assert.equal(val, false, "Account is available before openRegisters call from the owner.")
+        });
+        it('User can\'t register to the game if it closed.', async () => {
+            await expectThrow(piyango.register.call({from: accounts[1], value:web3.utils.toWei(web3.utils.toBN("10"), "ether")}));
         });
         it('Owner can open the game.', async () => {
-            await expectSuccess(piyango.openRegisters.call({from: accounts[0]}), "Shouldn't throw error.");
+            await expectSuccess(piyango.openRegisters(), "Shouldn't throw error.");
         });
-        /*it('Can be registered', async () => {
+        it('Game is available after owner opens it.', async _=>{
+            const val = await piyango.isGameAvailable();
+            await assert.equal(val, true, "Account couldn't be opened by the owner.")
+        })
+    });/*
+    describe('Register', async () => {
+        it('Users can register after the game is open.', async () => {
             await piyango.register({from: accounts[1], value:web3.utils.toWei(web3.utils.toBN("10"), "ether")})
-        });*/
+        });
         /*it('Account should be ready', async () => {
             const balance = await web3.eth.getBalance(accounts[1])
             console.log("Balance", balance)
@@ -66,7 +77,7 @@ contract("Piyango", (accounts) => {
         it("should be 10", async () => {
             const balance = await piyango.getBalanceOfContract()
             assert.equal(balance, 10e18, "The contract balance is 10.")
-        })*/
+        })
 
         // it("account balance should increase by 50 ethers", async () => {
         //     let initialBalance = accounts[0].balance
@@ -76,7 +87,7 @@ contract("Piyango", (accounts) => {
         //     assert.equal( defaultBalance + 50 , initialBalance + 50 , "The account balance increased by 50 ethers")
 
         // })
-    });
+    });*/
 
 });
 
